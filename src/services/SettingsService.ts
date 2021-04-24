@@ -35,7 +35,6 @@ class SettignsService {
 
   async findByUsername(username: string) {
     const settings = await this.settingsRepository.findOne({ username })
-    console.log(settings)
     return settings
   }
 

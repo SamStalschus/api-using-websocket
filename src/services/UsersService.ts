@@ -32,6 +32,11 @@ class UsersService {
     return userExists
   }
 
+  async findById(id: string) {
+    const userExists = await this.usersRepository.findOne({ id })
+    return userExists
+  }
+
 }
 
 export { UsersService }

@@ -54,6 +54,33 @@ io.on('connect', (socket) => {
       user_id
     })
 
-    // Salvar a conexão com o socket_id e user_id na tabela de conexão
+    const allMessages = await messagesService.listByUser(user_id)
+
+    // emit emite o evento e o on fica ouvindo
+
+    socket.emit('client_list_all_messages', allMessages)
+
+    const allUsers = await connectionsService.findAllWithoutAdmin()
+    io.emit('admin_list_all_users', allUsers)
+  })
+
+  socket.on('client_send_to_admin', async (params) => {
+    const { text, socket_admin_id } = params
+
+    const socket_id = socket.id
+
+    const { user_id } = await connectionsService.findBySocketId(socket_id)
+    const { email } = await usersService.findById(user_id)
+
+    const message = await messagesService.create({
+      text,
+      user_id
+    })
+
+    io.to(socket_admin_id).emit('admin_receive_message', {
+      email,
+      message,
+      socket_id
+    })
   })
 })
